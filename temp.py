@@ -62,6 +62,7 @@ print("ori:")
 print(matriz)
 print("\n")
 
+#blabla
 
 unq, num, inv, cts = np.unique(matriz[:, 1:3], return_index = True, return_inverse = True, return_counts = True, axis = 0)
 
