@@ -62,9 +62,7 @@ print("ori:")
 print(matriz)
 print("\n")
 
-#blabla
-
-unq, num, inv, cts = np.unique(matriz[:, 1:3], return_index = True, return_inverse = True, return_counts = True, axis = 0)
+unq, num, inv, cts = np.unique(matriz[:, 0:3], return_index = True, return_inverse = True, return_counts = True, axis = 0)
 
 print("size:")
 print(unq.size/2)
@@ -86,6 +84,19 @@ print("inv:")
 print(inv)
 print("\n")
 
+unq_sat, cts_sat = np.unique(matriz[:, 1:3], return_counts = True, axis = 0)
+
+print("size_sat:")
+print(unq_sat.size/2)
+print("\n")
+
+print("cts_sat:")
+print(cts_sat)
+print("\n")
+
+print("cts_sat size:")
+print(cts_sat.size)
+print("\n")
 
 #criar uma estrutura do loop que percorre a MATRIZ, criando submatrizes correspondentes aos filtros de unq
 
@@ -97,38 +108,38 @@ print(novo.size)
 print(matriz.size)
 
 for index in range(linesize):
-    novo = np.insert(novo, (7*index)+2, matriz[num[inv[index]], [0,3,4,5,6]])
+    novo = np.insert(novo, (7*index)+3, matriz[num[inv[index]], [3,4,5,6]])
 
 novo = np.reshape(novo, (linesize, 7))
 
 print(novo)
 
-np.savetxt("res.txt", novo, header = "satelite | tipo sinal | tempo | fase | I | Q | I+Q²" ,fmt="%.3f")
+np.savetxt("res.txt", novo, header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²" ,fmt="%.3f")
 
 
-monobloconp = np.array([[a, str(b), c, d, e, f, g] for a,b,c,d,e,f,g in novo], dtype='O')
+monobloconp = np.array([[a, b, str(c), d, e, f, g] for a,b,c,d,e,f,g in novo], dtype='O')
 #monobloco = np.reshape(monobloco, (int(unq.size/2), cts[0], 7))
 
+print(monobloconp)
 
-
-acc = 0
 monobloco = []
 
-
-
-print("fim")
-
-for i in range(cts.size):
+for i in range(cts_sat.size):
     monoaux = []
-    for j in range(cts[i]): 
-        monoaux.append(monobloconp[acc])
-        acc += 1
+    for j in range(int(monobloconp.size/7)): 
+        if(monobloconp[j][1]==unq_sat[i][0] and monobloconp[j][2]==str(unq_sat[i][1])): 
+            monoaux.append(monobloconp[j])
     monobloco.append([monoaux])
-print(acc)
+
+print("monobloco size:")
+
+print(len(monobloco))
+print(len(monobloco[0]))
+print(len(monobloco[0][0]))
 
 
 for valor in range(len(monobloco)):
-    np.savetxt(f"../../Desktop/safe/{monobloco[valor][0][0][0]}x{monobloco[valor][0][0][1]}.txt", monobloco[valor][0], header = "satelite | tipo sinal | tempo | fase | I | Q | I+Q²", fmt='%s')
+    np.savetxt(f"../../Desktop/safe/{monobloco[valor][0][0][1]}x{monobloco[valor][0][0][2]}.txt", monobloco[valor][0], header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²", fmt='%s')
 
 print(monobloco[0])
 
