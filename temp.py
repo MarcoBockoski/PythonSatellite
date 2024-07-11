@@ -42,7 +42,7 @@ matriz = []
 print("  tempo | satelite | tipo sinal | fase | I | Q | I+Q²")
 
 linesize = 0
-with open("amostra.txt", "r") as textFile:
+with open("6col.txt", "r") as textFile:
     #info = []
     
     for line in textFile:
@@ -55,6 +55,7 @@ with open("amostra.txt", "r") as textFile:
         col7 = int(info[4]) + m.pow(int(info[5]), 2)
         info.insert(6, col7)
         matriz.append(info)
+        #if(linesize>99999): break;
         
 matriz = np.array([matriz], dtype='f8')
 matriz =  np.reshape(matriz, (linesize, 7))
@@ -62,7 +63,12 @@ print("ori:")
 print(matriz)
 print("\n")
 
-unq, num, inv, cts = np.unique(matriz[:, 0:3], return_index = True, return_inverse = True, return_counts = True, axis = 0)
+#unq, cts= np.unique(matriz[:, 1:3], return_counts = True, axis = 0)
+#print("cts:")
+#print(cts)
+#print("\n")
+
+unq = np.unique(matriz[:, 1:3], axis = 0)
 
 print("size:")
 print(unq.size/2)
@@ -72,76 +78,25 @@ print("unq:")
 print(unq)
 print("\n")
 
-print("cts:")
-print(cts)
-print("\n")
+print(unq[0][0])
+print(unq[1][0])
 
-print("num:")
-print(num)
-print("\n")
+#i = np.where((matriz[:, 1] == 5) & (matriz[:, 2] == 0))[0]
+#temp.append(matriz[i, :])
 
-print("inv:")
-print(inv)
-print("\n")
+#np.savetxt("teste.txt", temp, header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²", fmt="%.3f")
 
-unq_sat, cts_sat = np.unique(matriz[:, 1:3], return_counts = True, axis = 0)
+temp = []
 
-print("size_sat:")
-print(unq_sat.size/2)
-print("\n")
-
-print("cts_sat:")
-print(cts_sat)
-print("\n")
-
-print("cts_sat size:")
-print(cts_sat.size)
-print("\n")
-
-#criar uma estrutura do loop que percorre a MATRIZ, criando submatrizes correspondentes aos filtros de unq
-
-novo = np.repeat(unq, cts, axis = 0)
-
-print(linesize)
-print(num.size)
-print(novo.size)
-print(matriz.size)
-
-for index in range(linesize):
-    novo = np.insert(novo, (7*index)+3, matriz[num[inv[index]], [3,4,5,6]])
-
-novo = np.reshape(novo, (linesize, 7))
-
-print(novo)
-
-np.savetxt("res.txt", novo, header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²" ,fmt="%.3f")
-
-
-monobloconp = np.array([[a, b, str(c), d, e, f, g] for a,b,c,d,e,f,g in novo], dtype='O')
-#monobloco = np.reshape(monobloco, (int(unq.size/2), cts[0], 7))
-
-print(monobloconp)
-
-monobloco = []
-
-for i in range(cts_sat.size):
-    monoaux = []
-    for j in range(int(monobloconp.size/7)): 
-        if(monobloconp[j][1]==unq_sat[i][0] and monobloconp[j][2]==str(unq_sat[i][1])): 
-            monoaux.append(monobloconp[j])
-    monobloco.append([monoaux])
-
-print("monobloco size:")
-
-print(len(monobloco))
-print(len(monobloco[0]))
-print(len(monobloco[0][0]))
-
-
-for valor in range(len(monobloco)):
-    np.savetxt(f"../../Desktop/safe/{monobloco[valor][0][0][1]}x{monobloco[valor][0][0][2]}.txt", monobloco[valor][0], header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²", fmt='%s')
-
-print(monobloco[0])
+for i in range(int(unq.size/2)):
+    i = np.where((matriz[:, 1] == unq[i][0]) & (matriz[:, 2] == unq[i][1]))[0]
+    temp.append(matriz[i, :])
+    
+#print(len(temp[6]))
+#np.savetxt("teste.txt", temp[6], header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²", fmt="%.3f")
+    
+for valor in range(len(temp)):
+    np.savetxt(f"../../Desktop/safe/{unq[valor][0]}x{unq[valor][1]}.txt", temp[valor], header = "tempo | satelite | tipo sinal | fase | I | Q | I+Q²", fmt='%s')
 
 print("fim")
 
