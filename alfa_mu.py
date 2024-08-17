@@ -80,7 +80,7 @@ def PlotPDF(pdf, s4, minfad, matriz3D, unq):
     sats = len(pdf)
     for i in range(sats):
         blocos = len(pdf[i])
-        for j in range(5):
+        for j in range(blocos):
             
             plt.figure()
             print(pdf[i][j])
